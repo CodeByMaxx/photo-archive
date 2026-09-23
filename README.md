@@ -1,52 +1,48 @@
 # Photo Archive
 
-A small self-hosted photo gallery built with **Flask** and **Docker**.
+A small photo archive application built with **Flask**, **SQLAlchemy**, **Pillow**, and **Docker**.
 
-The application provides a simple web interface for uploading, viewing, and deleting photos. Uploaded files are stored on the local filesystem and can be persisted with the included Docker Compose volume configuration.
+The project provides a simple web interface for uploading, viewing, and deleting photos. It is primarily a compact demonstration project for a containerized Flask application with persistent photo storage.
 
-> **Project status:** This is a lightweight personal project and is not intended to be a production-grade photo management system.
+## ✨ Features
 
----
-
-## Features
-
-* Flask-based web application
-* Web gallery for uploaded photos
-* Photo upload
-* Photo deletion
-* Persistent uploads with Docker volumes
+* Upload photos through a web interface
+* Display stored photos in a gallery
+* Delete photos
+* Persistent storage using Docker volumes
+* SQLite database via SQLAlchemy
+* Image handling with Pillow
 * Docker and Docker Compose support
-* Simple local filesystem storage
-* Pillow available for image processing
+* Simple Flask-based web application
 
----
+## 🛠️ Technology Stack
 
-## Tech Stack
+* **Python**
+* **Flask**
+* **SQLAlchemy**
+* **Pillow**
+* **SQLite**
+* **Docker**
+* **Docker Compose**
+* **HTML / CSS**
 
-| Component        | Technology       |
-| ---------------- | ---------------- |
-| Language         | Python           |
-| Web Framework    | Flask            |
-| Database Layer   | Flask-SQLAlchemy |
-| Image Processing | Pillow           |
-| Containerization | Docker           |
-| Orchestration    | Docker Compose   |
+## 📸 Result
 
----
+The application provides a simple photo archive with a web-based gallery.
 
-## Project Structure
+![Photo Archive](Image1.png)
+
+![Photo Archive Application](image.png)
+
+## 📂 Project Structure
 
 ```text
 photo-archive/
-│
 ├── app/
 │   ├── app.py
 │   ├── models.py
 │   ├── templates/
-│   ├── static/
-│   └── uploads/
-│       └── thumbs/
-│
+│   └── ...
 ├── Dockerfile
 ├── docker-compose.yml
 ├── requirements.txt
@@ -55,47 +51,19 @@ photo-archive/
 └── README.md
 ```
 
-The exact contents of `templates/` and `static/` may change as the UI evolves.
+## 🚀 Run with Docker
 
----
-
-## How It Works
-
-The Flask application uses a local upload directory:
-
-```text
-app/uploads/
-```
-
-Thumbnails are currently stored in:
-
-```text
-app/uploads/thumbs/
-```
-
-The gallery reads the available thumbnail files and displays them through the web interface.
-
-Uploaded files are handled by the Flask application and stored on the local filesystem.
-
----
-
-## Running with Docker
-
-The easiest way to run the application is Docker Compose.
-
-Build and start the application:
+Build and start the application with Docker Compose:
 
 ```bash
 docker compose up --build
 ```
 
-The application is exposed on:
+The application is then available at:
 
 ```text
-http://localhost:5000
+http://localhost:5000/
 ```
-
-Open that address in a browser.
 
 To stop the application:
 
@@ -103,202 +71,95 @@ To stop the application:
 docker compose down
 ```
 
----
+## 🐳 Docker
 
-## Persistent Storage
+The application is containerized so that the required Python environment and dependencies can be started consistently.
 
-The Docker Compose configuration mounts the local upload directory into the container:
+Docker Compose is used to simplify the local setup and to keep uploaded data persistent through the configured volume.
 
-```text
-./app/uploads:/app/app/uploads
-```
+## 🖼️ Application Workflow
 
-This means uploaded photos remain available when the container is recreated.
-
-The photos are therefore stored on the host machine under:
+The basic workflow is:
 
 ```text
-app/uploads/
+Upload Photo
+     │
+     ▼
+ Flask Application
+     │
+     ├── Store Photo
+     └── Store Metadata
+     │
+     ▼
+ Photo Gallery
+     │
+     ▼
+ View / Delete
 ```
 
-Make sure this directory is included in your backup strategy if the photos are important.
+## 📦 Persistence
 
----
+Uploaded photos are stored outside the temporary container filesystem through the Docker volume configuration.
 
-## Running Without Docker
+This means that restarting the container does not automatically remove the stored application data.
 
-A local Python environment can also be used.
+## 🔐 Security Considerations
 
-Create a virtual environment:
+This project is intentionally kept simple and is primarily intended as a portfolio/demo application.
 
-```bash
-python3 -m venv .venv
-```
+For a production deployment, additional measures would be appropriate, including:
 
-Activate it on Linux/macOS:
+* file type and file size validation
+* stronger upload restrictions
+* authentication and authorization
+* CSRF protection
+* production WSGI server configuration
+* secure deployment configuration
+* more comprehensive error handling
 
-```bash
-source .venv/bin/activate
-```
+## 🧪 Development
 
-Install the dependencies:
+Install the Python dependencies locally with:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Start the Flask application:
+The Docker setup is the recommended way to run the application consistently.
 
-```bash
-python app/app.py
-```
+## 🎯 Purpose
 
-The application listens on:
+The main purpose of this project is to demonstrate:
 
-```text
-http://localhost:5000
-```
+* Flask application development
+* database integration with SQLAlchemy
+* image handling with Pillow
+* Docker containerization
+* persistent application storage
+* a simple web-based CRUD workflow
 
----
+It is deliberately smaller than the larger data, cloud, and streaming projects in the portfolio.
 
-## Photo Upload
+## 🔮 Possible Improvements
 
-Photos can be uploaded through the web interface.
+Potential future improvements include:
 
-The application uses Werkzeug's `secure_filename()` when processing uploaded filenames.
-
-The current implementation does not provide a comprehensive image-validation or media-security pipeline, so this project should be treated as a personal/local application rather than an internet-facing upload service.
-
----
-
-## Photo Deletion
-
-The application also provides a delete operation for uploaded files.
-
-Deleted files are removed from the local upload directory.
-
-Because the application operates directly on the filesystem, backups should be maintained separately if the stored photos are valuable.
-
----
-
-## Database
-
-The project includes a SQLAlchemy model:
-
-```text
-app/models.py
-```
-
-The current application, however, does not use the database model as the primary storage mechanism for the gallery.
-
-The current gallery is filesystem-based.
-
-This leaves room for a future metadata/database layer containing information such as:
-
-* original filename
-* upload timestamp
-* image dimensions
-* file type
-* tags
-* albums
-* descriptions
-
----
-
-## Configuration
-
-The application currently has no complex external configuration system.
-
-The main application settings are defined in:
-
-```text
-app/app.py
-```
-
-The default Flask development server listens on:
-
-```text
-0.0.0.0:5000
-```
-
----
-
-## Development
-
-The application currently runs Flask with:
-
-```python
-debug=True
-```
-
-This is useful during development but should **not** be used for an internet-facing production deployment.
-
-For a production deployment, use an appropriate WSGI server and put the application behind a reverse proxy where required.
-
----
-
-## Screenshots
-
-The repository contains example images that can be used to document the application interface.
-
-Recommended screenshots:
-
-* gallery overview
-* photo upload
-* uploaded photo
-* delete operation
-
----
-
-## Current Limitations
-
-The current implementation is intentionally simple.
-
-Known limitations include:
-
-* filesystem-based photo storage
-* no authentication
-* no user management
-* no album management
-* no search
-* no metadata management
-* no dedicated production WSGI configuration
-* limited upload validation
-* database model is not currently integrated into the main gallery workflow
-
-These are potential areas for future development.
-
----
-
-## Possible Improvements
-
-Future versions could add:
-
-* image type and size validation
-* automatic thumbnail generation
-* EXIF metadata extraction
-* albums and tags
+* image thumbnails
+* image metadata
 * search and filtering
 * authentication
-* database-backed photo metadata
-* image pagination
-* production WSGI configuration
+* pagination
+* improved frontend styling
 * automated tests
-* backup functionality
+* object storage such as Amazon S3
+* production deployment
+
+## 📄 License
+
+No license file is currently included in the repository. If this project is intended for reuse by others, an explicit open-source license can be added.
 
 ---
 
-## License
-
-No license file is currently included in the repository.
-
-Unless a license is added, the project should be treated as **all rights reserved**.
-
----
-
-## Author
-
-**Markus**
-
-Personal Python / Flask project.
+**Project:** Photo Archive
+**Author:** Markus
 
