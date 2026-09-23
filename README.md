@@ -114,5 +114,93 @@ Stop the running containers with:
 docker compose down
 ```
 
-To
+To rebuild the application after changes:
+
+```bash
+docker compose up --build
+```
+
+## Development
+
+The Flask application is located in:
+
+```text
+app/
+```
+
+Python dependencies are defined in:
+
+```text
+requirements.txt
+```
+
+The container configuration is defined in:
+
+```text
+Dockerfile
+```
+
+while the complete local service setup is defined in:
+
+```text
+docker-compose.yml
+```
+
+## Docker Architecture
+
+The application is designed to run as a containerized service:
+
+```text
+Docker Compose
+      │
+      ▼
+┌───────────────┐
+│ Photo Archive │
+│    Flask      │
+└───────┬───────┘
+        │
+        ▼
+      :5000
+        │
+        ▼
+     Browser
+```
+
+This makes the application easy to reproduce on another machine without manually installing the Python runtime and dependencies.
+
+## Project Goals
+
+The project demonstrates a compact example of:
+
+* Flask web application development
+* Containerized Python applications
+* Docker image creation
+* Docker Compose deployment
+* Local self-hosted web applications
+
+It is intentionally much smaller than the data-engineering projects in the portfolio and serves as a focused example of **Python web development and containerization**.
+
+## Possible Extensions
+
+Potential future improvements could include:
+
+* User authentication
+* Multiple users
+* Photo upload through the web interface
+* Thumbnail generation
+* EXIF metadata extraction
+* Search and filtering
+* Albums
+* Tags
+* Date-based navigation
+* Persistent database storage
+* Object storage support
+* Automatic image resizing
+* Docker health checks
+* Automated tests
+* CI/CD
+
+## License
+
+See the repository for the current project license.
 
