@@ -1,206 +1,112 @@
 # Photo Archive
 
-A simple self-hosted photo archive built with **Flask** and **Docker**.
+A lightweight **photo archive application** built with **Flask** and **Docker**.
 
-The application provides a lightweight web interface for storing and browsing photos through a containerized Flask application.
+The project provides a simple web-based interface for managing and displaying photographs in a containerized environment.
 
-## Overview
-
-```text
-┌───────────────┐
-│    Browser    │
-└───────┬───────┘
-        │
-        │ HTTP
-        ▼
-┌───────────────┐
-│     Flask     │
-│      App      │
-└───────┬───────┘
-        │
-        ▼
-   Photo Storage
-```
-
-The project is intentionally kept small and focuses on providing a simple photo-archive application that can be started with Docker Compose.
-
-## Technology Stack
-
-| Component        | Technology     |
-| ---------------- | -------------- |
-| Backend          | Flask          |
-| Language         | Python         |
-| Containerization | Docker         |
-| Orchestration    | Docker Compose |
-| Interface        | Web browser    |
-
-## Project Structure
-
-```text
-photo-archive/
-├── app/
-├── Dockerfile
-├── docker-compose.yml
-├── Image1.png
-├── image.png
-├── requirements.txt
-└── README.md
-```
-
-## Features
-
-* Web-based photo archive
-* Flask backend
-* Docker-based deployment
-* Docker Compose setup
-* Local self-hosted deployment
-* Browser-based access
+---
 
 ## Screenshots
 
-The repository contains the existing application images:
+![Photo Archive](Image1.png)
 
-### Application
+![Photo Archive](image.png)
 
-![Application](Image1.png)
+---
 
-### Archive
+## Technology Stack
 
-![Archive](image.png)
+| Technology         | Purpose                   |
+| ------------------ | ------------------------- |
+| **Python**         | Application logic         |
+| **Flask**          | Web application framework |
+| **Docker**         | Containerization          |
+| **Docker Compose** | Local deployment          |
 
-These images are part of the repository and are intentionally kept as part of the project documentation.
+---
 
-## Requirements
+## Getting Started
 
-You need:
+### Requirements
 
 * Docker
 * Docker Compose
 
-No local Python installation is required when running the application through Docker.
-
-## Start the Application
-
 Clone the repository:
 
-```bash
+```bash id="j9y3cr"
 git clone https://github.com/CodeByMaxx/photo-archive.git
 cd photo-archive
 ```
 
-Build and start the application:
+Start the application:
 
-```bash
+```bash id="m6k2wd"
 docker compose up --build
 ```
 
-If your Docker setup requires elevated privileges:
+After the containers have started, access the application through the exposed web port.
 
-```bash
-sudo docker compose up --build
+---
+
+## Project Structure
+
+```text id="f1t7qz"
+photo-archive
+│
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+├── README.md
+│
+└── application source
 ```
 
-The application can then be accessed at:
-
-```text
-http://localhost:5000/
-```
-
-## Stop the Application
-
-Stop the running containers with:
-
-```bash
-docker compose down
-```
-
-To rebuild the application after changes:
-
-```bash
-docker compose up --build
-```
-
-## Development
-
-The Flask application is located in:
-
-```text
-app/
-```
-
-Python dependencies are defined in:
-
-```text
-requirements.txt
-```
-
-The container configuration is defined in:
-
-```text
-Dockerfile
-```
-
-while the complete local service setup is defined in:
-
-```text
-docker-compose.yml
-```
-
-## Docker Architecture
-
-The application is designed to run as a containerized service:
-
-```text
-Docker Compose
-      │
-      ▼
-┌───────────────┐
-│ Photo Archive │
-│    Flask      │
-└───────┬───────┘
-        │
-        ▼
-      :5000
-        │
-        ▼
-     Browser
-```
-
-This makes the application easy to reproduce on another machine without manually installing the Python runtime and dependencies.
+---
 
 ## Project Goals
 
-The project demonstrates a compact example of:
+The project was created to explore a simple, containerized web application using Python and Flask.
 
-* Flask web application development
-* Containerized Python applications
-* Docker image creation
-* Docker Compose deployment
-* Local self-hosted web applications
+The main focus is on:
 
-It is intentionally much smaller than the data-engineering projects in the portfolio and serves as a focused example of **Python web development and containerization**.
+* Flask web development
+* Containerization with Docker
+* Reproducible application deployment
+* Simple photo management
+* Web-based presentation of archived images
 
-## Possible Extensions
+---
 
-Potential future improvements could include:
+## Docker
 
-* User authentication
-* Multiple users
-* Photo upload through the web interface
-* Thumbnail generation
-* EXIF metadata extraction
-* Search and filtering
-* Albums
-* Tags
-* Date-based navigation
-* Persistent database storage
-* Object storage support
-* Automatic image resizing
-* Docker health checks
-* Automated tests
-* CI/CD
+Docker provides an isolated and reproducible environment for running the application.
+
+Using Docker Compose makes it possible to start the application with a single command:
+
+```bash id="f5m7x2"
+docker compose up --build
+```
+
+This keeps the local development and deployment workflow simple and consistent.
+
+---
+
+## Future Improvements
+
+Possible improvements include:
+
+* [ ] Improved photo metadata
+* [ ] Search and filtering
+* [ ] Categories and tags
+* [ ] Improved image management
+* [ ] Authentication
+* [ ] Persistent external storage
+* [ ] Improved responsive UI
+
+---
 
 ## License
 
-See the repository for the current project license.
+This project is licensed under the **MIT License**.
 
