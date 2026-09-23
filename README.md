@@ -34,33 +34,18 @@ The project provides a simple web-based interface for managing and displaying ph
 
 Clone the repository:
 
-```bash id="j9y3cr"
+```bash
 git clone https://github.com/CodeByMaxx/photo-archive.git
 cd photo-archive
 ```
 
 Start the application:
 
-```bash id="m6k2wd"
+```bash
 docker compose up --build
 ```
 
 After the containers have started, access the application through the exposed web port.
-
----
-
-## Project Structure
-
-```text id="f1t7qz"
-photo-archive
-│
-├── Dockerfile
-├── docker-compose.yml
-├── requirements.txt
-├── README.md
-│
-└── application source
-```
 
 ---
 
@@ -84,7 +69,7 @@ Docker provides an isolated and reproducible environment for running the applica
 
 Using Docker Compose makes it possible to start the application with a single command:
 
-```bash id="f5m7x2"
+```bash
 docker compose up --build
 ```
 
