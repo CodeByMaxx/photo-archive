@@ -1,62 +1,35 @@
 # Photo Archive
 
-A simple photo archive web application built with **Python, Flask, Flask-SQLAlchemy, Pillow and Docker**.
+A small photo archive web application built with **Python, Flask and Docker**.
 
-The application provides a lightweight web interface for uploading, viewing and deleting images. The application runs inside a Docker container and exposes the web interface on port `5000`.
+The application provides a simple browser-based gallery where images can be uploaded, displayed and deleted.
 
 ---
 
 ## Features
 
-* 🖼️ Image gallery
-* ⬆️ Image upload
-* 🗑️ Image deletion
-* 🐳 Docker support
-* 💾 Persistent upload storage through Docker volumes
-* 🗄️ SQLite/SQLAlchemy-ready data model
-* 🔐 Secure filenames using Werkzeug
-* 🐍 Python 3.12
-
----
-
-## Architecture
-
-```text
-Browser
-   │
-   ▼
-Flask Web Application
-   │
-   ├── Gallery
-   ├── Upload
-   └── Delete
-   │
-   ▼
-Image Storage
-   │
-   └── app/uploads/
-          │
-          └── thumbs/
-```
-
-The application is packaged as a Docker container and exposes Flask on port `5000`.
+* Image gallery
+* Image upload
+* Image deletion
+* Docker support
+* Docker Compose configuration
+* Persistent upload directory
+* Secure upload filenames with Werkzeug
 
 ---
 
 ## Technology Stack
 
-| Component        | Technology               |
-| ---------------- | ------------------------ |
-| Language         | Python 3.12              |
-| Web Framework    | Flask 3.0.3              |
-| ORM              | Flask-SQLAlchemy 3.1.1   |
-| Image Processing | Pillow 11.0.0            |
-| Web Server       | Flask development server |
-| Containerization | Docker                   |
-| Orchestration    | Docker Compose           |
-| Port             | `5000`                   |
+| Component               | Technology               |
+| ----------------------- | ------------------------ |
+| Language                | Python 3.12              |
+| Web Framework           | Flask 3.0.3              |
+| WSGI/Application Server | Flask development server |
+| Container               | Docker                   |
+| Orchestration           | Docker Compose           |
+| Port                    | `5000`                   |
 
-The dependencies are defined in `requirements.txt`.
+The repository also contains Flask-SQLAlchemy and Pillow as dependencies, but the current `app.py` does not use them in the active gallery/upload workflow.
 
 ---
 
@@ -80,73 +53,83 @@ photo-archive/
 └── README.md
 ```
 
-The Flask entry point is `app/app.py`. The Docker image also starts this file directly.
+The current GitHub repository contains the application, Docker configuration, requirements and two image assets.
 
 ---
 
-## Application
+## How It Works
 
-The Flask application provides a simple gallery interface.
-
-### Gallery
-
-The root route displays the available images:
-
-```text
-GET /
-```
-
-The application reads the image files from:
+The current application uses the following storage path:
 
 ```text
 app/uploads/thumbs/
 ```
 
-and renders them through the gallery template.
+When the application starts, this directory is created if it does not already exist.
+
+```python
+UPLOAD_FOLDER = os.path.join(
+    os.path.dirname(__file__),
+    "uploads"
+)
+
+THUMB_FOLDER = os.path.join(
+    UPLOAD_FOLDER,
+    "thumbs"
+)
+```
+
+The gallery then reads the files from this directory.
+
+> **Note:** The `thumbs` directory is currently used as the image storage directory. The application does not currently generate thumbnails with Pillow.
+
+---
+
+## Application Routes
+
+### Gallery
+
+```text
+GET /
+```
+
+Displays the images found in:
+
+```text
+app/uploads/thumbs/
+```
+
+The filenames are passed to the gallery template.
 
 ### Upload
-
-Images can be uploaded through:
 
 ```text
 POST /upload
 ```
 
-Uploaded filenames are processed with Werkzeug's `secure_filename()` before being stored.
+The application expects an uploaded file under the form field:
+
+```text
+file
+```
+
+The filename is passed through Werkzeug's `secure_filename()` before the file is saved.
 
 ### Serve Images
-
-Uploaded images are served through:
 
 ```text
 GET /uploads/<filename>
 ```
 
-### Delete
+Uploaded files are served from the `thumbs` directory.
 
-Images can be removed through:
+### Delete
 
 ```text
 POST /delete/<filename>
 ```
 
-The application checks that the target file exists before deleting it.
-
----
-
-## Docker
-
-The project uses a minimal Python 3.12 image:
-
-```dockerfile
-FROM python:3.12-slim
-```
-
-Dependencies are installed from `requirements.txt`, the application is copied into the container and port `5000` is exposed. The container starts with:
-
-```text
-python app/app.py
-```
+The selected file is removed from the upload directory.
 
 ---
 
@@ -165,21 +148,27 @@ Start the application:
 docker compose up --build
 ```
 
-The repository's Compose configuration builds the application and maps:
+The Compose configuration exposes:
 
 ```text
-5000:5000
+localhost:5000
 ```
 
-It also mounts the upload directory:
+and mounts:
 
 ```text
-./app/uploads:/app/app/uploads
+./app/uploads
 ```
 
-so uploaded files remain outside the container lifecycle.
+to:
 
-Open the application in your browser:
+```text
+/app/app/uploads
+```
+
+inside the container.
+
+Open:
 
 ```text
 http://localhost:5000
@@ -187,15 +176,9 @@ http://localhost:5000
 
 ---
 
-## Stop the Application
+## Stop the Container
 
-Press:
-
-```text
-Ctrl+C
-```
-
-or stop the Compose stack with:
+Stop the application with:
 
 ```bash
 docker compose down
@@ -203,9 +186,27 @@ docker compose down
 
 ---
 
-## Local Development
+## Docker Configuration
 
-The project can also be run directly with Python.
+The Docker image is based on:
+
+```text
+python:3.12-slim
+```
+
+The image:
+
+1. creates `/app`
+2. installs `requirements.txt`
+3. copies the repository into the container
+4. exposes port `5000`
+5. starts `python app/app.py`
+
+This behaviour is defined in the current `Dockerfile`.
+
+---
+
+## Local Development
 
 Create a virtual environment:
 
@@ -233,7 +234,7 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-Start Flask:
+Start the application:
 
 ```bash
 python app/app.py
@@ -247,7 +248,7 @@ http://localhost:5000
 
 ---
 
-## Data Persistence
+## Persistence
 
 Docker Compose mounts:
 
@@ -255,21 +256,17 @@ Docker Compose mounts:
 ./app/uploads
 ```
 
-into:
+into the container.
 
-```text
-/app/app/uploads
-```
+This means uploaded files are stored on the host filesystem and are not lost when the container itself is recreated.
 
-inside the container. This means uploaded images are stored in the repository's `app/uploads` directory rather than only inside the container.
-
-For a production deployment, uploaded photos should generally be stored separately from the application source tree, for example on dedicated persistent storage or object storage.
+For a production deployment, a dedicated persistent storage solution or object storage would be preferable.
 
 ---
 
-## Data Model
+## Database Model
 
-The project already contains a SQLAlchemy model for images:
+The repository contains an SQLAlchemy model:
 
 ```python
 class Image(db.Model):
@@ -277,101 +274,89 @@ class Image(db.Model):
     filename = db.Column(db.String(255))
 ```
 
-This provides a foundation for extending the application with database-backed image metadata.
+However, the current `app.py` does not initialize or use this database model for the active upload/gallery workflow.
 
-Possible future metadata includes:
-
-* original filename
-* upload timestamp
-* file size
-* MIME type
-* image dimensions
-* EXIF metadata
-* album/category
-* description
-
----
-
-## Security Considerations
-
-The application uses Werkzeug's `secure_filename()` when handling uploaded filenames.
-
-For production use, additional protections should be added:
-
-* restrict allowed image formats
-* validate MIME types
-* limit upload sizes
-* generate unique storage filenames
-* disable Flask debug mode
-* add authentication
-* add CSRF protection
-* store uploads outside the source tree
-* avoid exposing arbitrary uploaded files
-* use a production WSGI server
+This can serve as a foundation for a future database-backed version.
 
 ---
 
 ## Screenshots
 
-The repository contains example images that can be used to document the application:
+The repository contains two image assets:
 
-![Photo Archive](Image1.png)
+```text
+Image1.png
+image.png
+```
 
-![Photo Archive](image.png)
+They can be used as documentation/examples for the project.
+
+---
+
+## Security Notes
+
+The current implementation uses `secure_filename()` for uploaded filenames, which helps prevent unsafe filenames.
+
+For production use, additional security measures should be added:
+
+* validate file types
+* limit upload size
+* generate unique filenames
+* add authentication
+* add CSRF protection
+* disable Flask debug mode
+* use a production WSGI server
+* separate uploaded files from application source
+* restrict access to uploaded content
+
+The current application starts Flask with:
+
+```python
+debug=True
+```
+
+so it should **not be exposed directly to the public internet in its current form**.
 
 ---
 
 ## Current Scope
 
-This project is intentionally lightweight.
-
-The current implementation focuses on the basic photo-management workflow:
+The current application intentionally remains small:
 
 ```text
 Upload
-  │
-  ▼
+   │
+   ▼
 Store
-  │
-  ▼
+   │
+   ▼
 Display
-  │
-  ▼
+   │
+   ▼
 Delete
 ```
 
-It provides a small foundation that can be extended into a more complete personal photo archive.
+It is a simple foundation for a personal photo archive.
 
 ---
 
 ## Possible Improvements
 
-Future development could include:
+Future versions could add:
 
-* image thumbnails generated with Pillow
-* EXIF metadata extraction
-* search and filtering
+* automatic thumbnail generation
+* EXIF metadata
 * albums
 * tags
+* search
 * pagination
-* image previews
+* image metadata
 * duplicate detection
 * authentication
-* user accounts
-* database-backed image management
+* database-backed image records
 * object storage such as Amazon S3
-* background image processing
-* production WSGI server
 * automated tests
-* CI/CD
-
----
-
-## License
-
-No license file is currently visible in the repository.
-
-If this project is intended to be publicly reusable, add an appropriate `LICENSE` file.
+* production WSGI deployment
 
 ---
 
